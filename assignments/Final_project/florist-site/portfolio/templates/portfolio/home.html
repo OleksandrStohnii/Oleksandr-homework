@@ -1,0 +1,235 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zolotaya — квіти та декор</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #213A63; --mocha: #A07D72; --mocha-dark: #8A6A60;
+            --lilac: #E9E1E6; --paper: #F8F4F3; --muted: #5B6B85;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Inter', Arial, sans-serif; }
+        a { color: inherit; text-decoration: none; }
+        .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+        h1, h2, h3, .logo, .cat, .num { font-family: 'Jost', 'Inter', Arial, sans-serif; font-weight: 400; }
+
+        /* Навігація */
+        .topbar { position: sticky; top: 0; z-index: 10; background: rgba(248,244,243,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--lilac); }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; }
+        .logo { font-size: 24px; font-weight: 500; letter-spacing: .32em; text-transform: uppercase; color: var(--mocha); }
+        .nav-links { display: flex; align-items: center; gap: 28px; font-size: 15px; }
+        .nav-links > a:not(.btn):hover { color: var(--mocha); }
+
+        /* Кнопки */
+        .btn { display: inline-block; background: var(--mocha); color: #fff; padding: 16px 32px; border-radius: 999px; font-size: 13px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; text-align: center; box-shadow: 0 8px 22px rgba(160,125,114,.3); transition: transform .2s, background .2s; }
+        .btn:hover { background: var(--mocha-dark); transform: translateY(-2px); }
+        .btn-small { padding: 11px 22px; box-shadow: none; }
+        .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); box-shadow: none; padding: 15px 30px; }
+        .btn-ghost:hover { background: var(--ink); color: #fff; }
+
+        /* Головний екран */
+        .hero-bg { background: linear-gradient(135deg, #EFE6E8 0%, #F8F4F3 60%, #E4E9F2 100%); }
+        .hero { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; padding: 64px 0 76px; }
+        .hero h1 { font-size: 46px; line-height: 1.15; letter-spacing: .05em; text-transform: uppercase; margin: 0 0 20px; }
+        .hero p { font-size: 18px; line-height: 1.7; color: var(--muted); margin: 0 0 32px; max-width: 520px; }
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+        .hero-photo { position: relative; max-width: 420px; width: 100%; margin-left: auto; }
+        .hero-photo::before { content: ""; position: absolute; inset: -16px; background: var(--lilac); border-radius: 999px 999px 28px 28px; }
+        .hero-photo::after { content: ""; position: absolute; inset: -16px; border: 1px solid var(--mocha); border-radius: 999px 999px 28px 28px; transform: scale(1.04); }
+        .hero-img { position: relative; z-index: 1; display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center top; border-radius: 999px 999px 24px 24px; }
+
+        /* Заголовки секцій */
+        section { padding: 28px 0; }
+        .title { font-size: 32px; line-height: 1.2; letter-spacing: .1em; text-transform: uppercase; margin: 40px 0 14px; }
+        .title::after { content: ""; display: block; width: 56px; height: 1px; background: var(--mocha); margin-top: 14px; }
+        .sub { color: var(--muted); margin: 0 0 28px; font-size: 17px; line-height: 1.6; }
+
+        /* Категорії */
+        .cats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+        .cat { display: flex; align-items: center; min-height: 130px; padding: 36px 22px; border: 1px solid rgba(33,58,99,.08); border-radius: 20px; font-size: 17px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; line-height: 1.3; transition: transform .2s, box-shadow .2s; }
+        .cat:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(33,58,99,.08); }
+        .k1 { background: #EBDDD8; } .k2 { background: #E9E1E6; } .k3 { background: #DCE3EF; } .k4 { background: #F1E7E2; }
+        .cat.active { outline: 2px solid var(--mocha); outline-offset: 2px; }
+
+        /* Як це працює */
+        .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+        .step { background: #fff; border: 1px solid var(--lilac); border-radius: 20px; padding: 28px; }
+        .num { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--mocha); color: var(--mocha); font-size: 20px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+        .step h3 { margin: 0 0 8px; font-size: 20px; font-weight: 500; }
+        .step p { margin: 0; color: var(--muted); line-height: 1.6; font-size: 15px; }
+
+        /* Роботи */
+        .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+        .card { background: #fff; border: 1px solid var(--lilac); border-radius: 22px; overflow: hidden; box-shadow: 0 10px 30px rgba(33,58,99,.05); transition: transform .2s, box-shadow .2s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(33,58,99,.09); }
+        .card-img { display: block; width: 100%; height: 300px; object-fit: cover; object-position: center top; background: var(--lilac); }
+        .card-body { padding: 20px 20px 24px; }
+        .card h3 { margin: 0 0 8px; font-size: 20px; font-weight: 500; }
+        .tag { color: var(--mocha); letter-spacing: .06em; text-transform: uppercase; font-size: 12px; font-weight: 500; }
+        .card p { color: var(--muted); font-size: 15px; line-height: 1.6; margin: 12px 0 0; }
+
+        /* Заклик до дії */
+        .cta { background: linear-gradient(135deg, #213A63, #34527F); color: #fff; border-radius: 30px; padding: 64px 24px; text-align: center; margin: 72px 0 32px; }
+        .cta h2 { font-size: 38px; line-height: 1.2; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 14px; }
+        .cta p { margin: 0 0 30px; font-size: 18px; line-height: 1.6; }
+        .cta .btn { background: var(--paper); color: var(--ink); box-shadow: none; }
+        .cta .btn:hover { background: var(--lilac); }
+
+        /* Контакти */
+        .contacts { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 24px; }
+        .contact { display: inline-block; padding: 14px 26px; border: 1px solid var(--mocha); border-radius: 999px; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; transition: background .2s, color .2s; }
+        .contact:hover { background: var(--mocha); color: #fff; }
+
+        footer { padding: 24px 0 48px; color: var(--muted); font-size: 14px; text-align: center; }
+        .mobile-cta { display: none; }
+
+        /* Телефони та планшети */
+        @media (max-width: 800px) {
+            .container { padding-left: 20px; padding-right: 20px; }
+            .hero { grid-template-columns: 1fr; padding: 36px 0 52px; gap: 44px; }
+            .hero h1 { font-size: 30px; }
+            .hero p { font-size: 16px; }
+            .hero-photo { margin: 0 auto; max-width: 300px; }
+            .nav-links { gap: 12px; }
+            .nav-links a:not(.btn) { display: none; }
+            .logo { font-size: 20px; }
+            .title { font-size: 26px; }
+            .cats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+            .cat { padding: 24px 16px; min-height: 100px; font-size: 14px; }
+            .steps, .grid { grid-template-columns: 1fr; }
+            .card-img { height: 280px; }
+            .cta { padding: 44px 20px; margin-top: 48px; }
+            .cta h2 { font-size: 26px; }
+            body { padding-bottom: 84px; }
+            .mobile-cta { display: block; position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 20; }
+        }
+        @media (max-width: 380px) {
+            .hero-actions .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <div class="container nav">
+            <a class="logo" href="/">Zolotaya</a>
+            <div class="nav-links">
+                <a href="#works">Каталог</a>
+                <a href="#how">Як це працює</a>
+                <a href="#contacts">Контакти</a>
+                <a class="btn btn-small" href="{% url 'order_create' %}">Залишити заявку</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-bg">
+        <div class="container hero">
+            <div>
+                <h1>Квіти та декор для ваших найважливіших днів</h1>
+                <p>Весілля, оформлення закладів, Гелловін і Новий рік. Розкажіть про свою подію, і я домовлюся з вами про деталі та вартість.</p>
+                <div class="hero-actions">
+                    <a class="btn" href="{% url 'order_create' %}">Залишити заявку</a>
+                    <a class="btn btn-ghost" href="#works">Дивитись роботи</a>
+                </div>
+            </div>
+            <div class="hero-photo">
+                <img class="hero-img" src="{% static 'portfolio/hero.jpg' %}" alt="Квіткове оформлення Zolotaya">
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <section id="categories">
+            <h2 class="title">Що я оформлюю</h2>
+            <p class="sub">Оберіть напрям, який вам потрібен.</p>
+            <div class="cats">
+                {% for category in categories %}
+                    <a class="cat {% cycle 'k1' 'k2' 'k3' 'k4' %}{% if current.id == category.id %} active{% endif %}" href="{% url 'category' category.id %}#works">{{ category.name }}</a>
+                {% empty %}
+                    <p>Категорії незабаром з’являться.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section id="how">
+            <h2 class="title">Як це працює</h2>
+            <p class="sub">Три простих кроки від ідеї до готового декору.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="num">1</div>
+                    <h3>Залишаєте заявку</h3>
+                    <p>Вказуєте тип події, дату та побажання. Це займає одну хвилину.</p>
+                </div>
+                <div class="step">
+                    <div class="num">2</div>
+                    <h3>Обговорюємо деталі</h3>
+                    <p>Я зв’язуюся з вами, ми обговорюємо ідею та вартість.</p>
+                </div>
+                <div class="step">
+                    <div class="num">3</div>
+                    <h3>Створюю декор</h3>
+                    <p>Привожу та оформлюю все до вашої події.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="works">
+            <h2 class="title">Наші роботи</h2>
+            <p class="sub">
+                {% if current %}
+                    Категорія: {{ current.name }} ·
+                    <a href="{% url 'home' %}#works" style="color: var(--mocha); text-decoration: underline;">Показати всі роботи</a>
+                {% else %}
+                    Приклади оформлення, які вже зроблені.
+                {% endif %}
+            </p>
+            <div class="grid">
+                {% for work in works %}
+                    <div class="card">
+                        {% if work.image %}
+                            <img class="card-img" src="{{ work.image.url }}" alt="{{ work.title }}" loading="lazy">
+                        {% else %}
+                            <div class="card-img"></div>
+                        {% endif %}
+                        <div class="card-body">
+                            <h3>{{ work.title }}</h3>
+                            <span class="tag">{{ work.category.name }}</span>
+                            <p>{{ work.description }}</p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>Робіт поки немає.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="cta">
+            <h2>Розкажіть про свою подію</h2>
+            <p>Вкажіть дату, тип події та побажання, і я з вами зв’яжуся.</p>
+            <a class="btn" href="{% url 'order_create' %}">Залишити заявку</a>
+        </section>
+
+        <section id="contacts">
+            <h2 class="title">Контакти</h2>
+            <p class="sub">Напишіть мені зручним для вас способом.</p>
+            <div class="contacts">
+                               <a class="contact" href="tel:+380992002458">+38 (099) 200 24 58</a>
+                                <a class="contact" href="https://www.instagram.com/zolotaya.kh.ua" target="_blank" rel="noopener">Instagram</a>
+                <a class="contact" href="https://t.me/AlinaChechina" target="_blank" rel="noopener">Telegram</a>
+            </div>
+        </section>
+
+        <footer>Zolotaya · квіти та декор</footer>
+
+    </div>
+
+    <a class="btn mobile-cta" href="{% url 'order_create' %}">Залишити заявку</a>
+
+</body>
+</html>
